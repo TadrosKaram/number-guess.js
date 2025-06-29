@@ -40,7 +40,6 @@ function resetGame() {
 
 function updateFeedback(guess) {
   const diff = Math.abs(randomNumber - guess);
-  const direction = guess < randomNumber ? '[Higher]' : '[Lower]';
 
   if (diff > 5) {
     displayMessage(
