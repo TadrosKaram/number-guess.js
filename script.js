@@ -5,7 +5,6 @@ let score = max;
 let highscore = 0;
 let randomNumber = Math.ceil(Math.random() * max);
 
-// Cache DOM elements
 const body = document.querySelector('body');
 const messageEl = document.querySelector('.message');
 const numberEl = document.querySelector('.number');
@@ -15,7 +14,6 @@ const highscoreEl = document.querySelector('.highscore');
 const countEl = document.querySelector('.count');
 const betweenEl = document.querySelector('.between');
 
-// Initial setup
 scoreEl.textContent = score;
 betweenEl.textContent = `Guessing a number between 1 and ${max}`;
 
