@@ -1,86 +1,102 @@
 'use strict';
+
 const max = 20;
-document.querySelector(
-  '.between'
-).textContent = `Guessing a number between 1 and ${max}`;
-document.querySelector('.score').textContent = max;
-let randomNumber = Math.ceil(Math.random() * max);
 let score = max;
 let highscore = 0;
+let randomNumber = Math.ceil(Math.random() * max);
+
+// Cache DOM elements
+const body = document.querySelector('body');
+const messageEl = document.querySelector('.message');
+const numberEl = document.querySelector('.number');
+const scoreEl = document.querySelector('.score');
+const guessEl = document.querySelector('.guess');
+const highscoreEl = document.querySelector('.highscore');
+const countEl = document.querySelector('.count');
+const betweenEl = document.querySelector('.between');
+
+// Initial setup
+scoreEl.textContent = score;
+betweenEl.textContent = `Guessing a number between 1 and ${max}`;
+
+function displayMessage(msg) {
+  messageEl.textContent = msg;
+}
+
+function resetGame() {
+  randomNumber = Math.ceil(Math.random() * max);
+  score = max;
+  scoreEl.textContent = score;
+  numberEl.textContent = '?';
+  numberEl.style.width = '15rem';
+  numberEl.style.backgroundColor = '';
+  numberEl.style.fontSize = '3rem';
+  body.style.backgroundColor = '#222';
+  displayMessage('Start guessing...');
+  guessEl.value = '';
+  countEl.textContent = '0';
+  betweenEl.textContent = `Guessing a number between 1 and ${max}`;
+}
+
+function updateFeedback(guess) {
+  const diff = Math.abs(randomNumber - guess);
+  const direction = guess < randomNumber ? '[Higher]' : '[Lower]';
+
+  if (diff > 5) {
+    displayMessage(
+      guess < randomNumber
+        ? '🤣 Not even close [Higher]'
+        : 'You are so bad at this you know 😴 [Lower]'
+    );
+  } else if (diff === 1) {
+    displayMessage(
+      guess < randomNumber ? 'Very very hot 🔥 [Higher]' : '🤐 [Lower]'
+    );
+  } else {
+    displayMessage(
+      guess < randomNumber ? '🙈 Closer [Higher]' : 'Not bad 🤔 [Lower]'
+    );
+  }
+}
 
 document.querySelector('.check').addEventListener('click', function () {
-  let guess = Number(document.querySelector('.guess').value);
-  document.querySelector('.number').textContent = guess;
-  if (randomNumber === guess) {
-    document.querySelector(
-      '.message'
-    ).textContent = `🧠 Correct Number the number was ${randomNumber} and you guess ${guess} ☑️ `;
-    document.querySelector('body').style.backgroundColor = '#60b347';
-    document.querySelector('.number').style.width = '100%';
-    document.querySelector('.number').style.backgroundColor = '#ffa500';
-    document.querySelector('.number').style.fontSize = '100px';
-    let currentHighScore = Number(
-      document.querySelector('.highscore').textContent
+  const guess = Number(guessEl.value);
+  numberEl.textContent = guess;
+
+  if (!guess) {
+    displayMessage('❌ Invalid, Enter a number first');
+    return;
+  }
+
+  if (guess > max) {
+    displayMessage(`${guess} is out of range. Guess from 1 to ${max}! 😆`);
+    return;
+  }
+
+  if (guess === randomNumber) {
+    displayMessage(
+      `🧠 Correct Number! It was ${randomNumber}, and you guessed ${guess} ☑️`
     );
-    if (score > currentHighScore) {
+    body.style.backgroundColor = '#60b347';
+    numberEl.style.width = '100%';
+    numberEl.style.backgroundColor = '#ffa500';
+    numberEl.style.fontSize = '100px';
+
+    if (score > Number(highscoreEl.textContent)) {
       highscore = score;
-      document.querySelector('.highscore').textContent = highscore;
+      highscoreEl.textContent = highscore;
     }
-  } else if (!guess) {
-    document.querySelector('.message').textContent =
-      '❌ Invalid, Enter a number first';
-  } else if (guess > max) {
-    document.querySelector(
-      '.message'
-    ).textContent = `${guess} is out of range guess from 1-${max}! 😆`;
   } else {
     score--;
-    document.querySelector('.score').textContent = score;
-    if (score === 0) {
-      document.querySelector('.message').textContent = 'You lost! 😓';
-    }
-    let howManyGuesses = Number(document.querySelector('.count').textContent);
-    howManyGuesses++;
-    document.querySelector('.count').textContent = howManyGuesses;
+    scoreEl.textContent = score;
+    countEl.textContent = Number(countEl.textContent) + 1;
 
-    if (randomNumber > guess && randomNumber - guess > 5) {
-      document.querySelector('.message').textContent =
-        '🤣 Not even close [Higher]';
-    } else if (randomNumber > guess && randomNumber - guess === 1) {
-      document.querySelector('.message').textContent =
-        'Very very hot 🔥 [Higher]';
-    } else if (randomNumber > guess && randomNumber - guess < 5) {
-      document.querySelector('.message').textContent = '🙈 Closer [Higher]';
-    } else if (randomNumber < guess && guess - randomNumber > 5) {
-      document.querySelector('.message').textContent =
-        'You are so bad at this you know 😴 [Lower]';
-    } else if (randomNumber < guess && guess - randomNumber === 1) {
-      document.querySelector('.message').textContent = '🤐 [Lower]';
-    } else if (randomNumber < guess && guess - randomNumber < 5) {
-      document.querySelector('.message').textContent = 'Not bad 🤔 [Lower]';
+    if (score === 0) {
+      displayMessage('You lost! 😓');
+    } else {
+      updateFeedback(guess);
     }
   }
 });
 
-document.querySelector('.again').addEventListener('click', function () {
-  randomNumber = Math.ceil(Math.random() * max);
-
-  score = max;
-  document.querySelector('.score').textContent = score;
-
-  document.querySelector('.number').textContent = '?';
-  document.querySelector('.number').style.width = '15rem';
-  document.querySelector('.number').style.backgroundColor = '';
-  document.querySelector('.number').style.fontSize = '3rem';
-
-  document.querySelector('body').style.backgroundColor = '#222';
-
-  document.querySelector('.message').textContent = 'Start guessing...';
-  document.querySelector('.guess').value = '';
-
-  document.querySelector('.count').textContent = '0';
-
-  document.querySelector(
-    '.between'
-  ).textContent = `Guessing a number between 1 and ${max}`;
-});
+document.querySelector('.again').addEventListener('click', resetGame);
