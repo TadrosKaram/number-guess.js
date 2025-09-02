@@ -24,6 +24,9 @@ A simple interactive number guessing game built with vanilla JavaScript. Players
 
 JavaScript (ES6)
 
+## 🚀 Live Preview
+http://tadroskaram.me/number-guess.js/
+
 
 
 
